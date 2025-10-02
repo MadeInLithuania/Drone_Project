@@ -189,6 +189,7 @@ static unsigned int Ue(unsigned char *pBuff, unsigned int nLen, unsigned int *nS
 		}
 		(*nStartBit)++;
 	}
+
 	return (1 << nZeroNum) - 1 + dwRet;
 }
 
@@ -221,8 +222,14 @@ static unsigned long u(unsigned int BitCount, unsigned char * buf, unsigned int 
 	}
 	return dwRet;
 }
+
+
+
+
 #ifdef WIN32
+
 //struct timespec { long tv_sec; long tv_nsec; };    //header part
+
 int clock_gettime(int, struct timespec *spec)      //C-file part
 {
 	__int64 wintime; GetSystemTimeAsFileTime((FILETIME*)&wintime);
@@ -293,7 +300,13 @@ long getTickCount2() {
 	clock_gettime((clockid_t)0, &ts);
 	return (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
 }
+
 #endif
+
+
+
+
+
 int32_t findSPSPPSHeader(unsigned char* bufPtr, int bufLen, unsigned char* nalBuf, int* nalLen) {
 	int i;
 	bool found = false;
@@ -331,6 +344,7 @@ int32_t findHeadMarker(unsigned char* bufPtr, int bufLen, int *Offset) {
 			}
 		}
 	}
+
 	return findCnt;
 }
 
@@ -526,10 +540,12 @@ int	h264_decode_seq_parameter_set(unsigned char * buf, unsigned int nLen, int *W
 			printf("poc_cycle_length error\n");
 			return -1;
 		}
+
 		for (i = 0; i < sps->poc_cycle_length; i++)
 		{
 			sps->offset_for_ref_frame[i] = Se(buf, nLen, &StartBit);
 		}
+
 	}
 	else if (sps->poc_type != 2)
 	{
@@ -565,6 +581,7 @@ int	h264_decode_seq_parameter_set(unsigned char * buf, unsigned int nLen, int *W
 		//crop_bottom
 		Ue(buf, nLen, &StartBit);
 	}
+
 	sps->vui_parameters_present_flag = u(1, buf, &StartBit);
 	if (sps->vui_parameters_present_flag)
 	{
@@ -610,6 +627,7 @@ int	h264_decode_seq_parameter_set(unsigned char * buf, unsigned int nLen, int *W
 			Ue(buf, nLen, &StartBit);
 			Ue(buf, nLen, &StartBit);
 		}
+
 		sps->timing_info_present_flag = u(1, buf, &StartBit);
 		if (sps->timing_info_present_flag)
 		{
@@ -623,7 +641,12 @@ int	h264_decode_seq_parameter_set(unsigned char * buf, unsigned int nLen, int *W
 		{
 			*framerate = 30;
 		}
+
+
 	}
+
+
+
 	return 0;
 }
 
@@ -662,6 +685,7 @@ int32_t convertOSD(uint8_t* osdBuf, int osdLen, uint8_t* convBuf, int* convLen) 
 	*convLen = osdLen - count;
 	return 0;
 }
+
 uint8_t spsFlag[] = { 0x00,0x00,0x00,0x01,0x07 };
 uint8_t ppsFlag[] = { 0x00,0x00,0x00,0x01,0x08 };
 uint8_t endFlag[] = { 0x00,0x00,0x00,0x01 };
@@ -740,20 +764,25 @@ int findNALU(void* buffer, int i, int end, int mask, int compare)
 		//	 LOGD("after mask: %x", ((*(uint32_t*)((unsigned char*)buffer+i)) & mask) );
 		i++;
 	}
+
 	if (i>end - 4)
 	{
 		return end;
 	}
+
 	if (i>0 && ((unsigned char*)buffer)[i - 1] == 0)
 	{
 		i--;
 	}
+
 	return i;
 }
 
 void parseSpsPps(uint8_t* _buffer, int checkEnd, int& sps_start, int& sps_size, int&pps_start, int&pps_size) {
 	int i = 0;
+
 	sps_start = pps_start = -1;
+
 	/*
 	* if to find an end, simply set mask = 0x00ffffff, compare = 0x00010000.
 	* if to find a SPS, set mask = 0x1fffffff, compare = 0x07010000.
@@ -778,6 +807,7 @@ void parseSpsPps(uint8_t* _buffer, int checkEnd, int& sps_start, int& sps_size, 
 		//mark 1 represents the following is sps
 		//		LOGI("sps_size=%d", sps_size);
 	}
+
 	//look for pps
 	i = findNALU(_buffer, i, checkEnd, 0x1fffffff, 0x08010000);
 
@@ -805,8 +835,11 @@ int find_SPS_PPS(uint8_t* pInBuff, int iSize, uint8_t* pSPS, int* iSpsLen, uint8
 
 	for (i = 0; i<iSize; i++) {
 		if (spsPos>250 || ppsPos>250) return -1;
+
 		if (memcmp(pInBuff + i, endFlag, endsize) == 0) {
+
 			int nextbuff = pInBuff[i + endsize];
+
 			if (flag == 0x66 && ((nextbuff & 0x1F) == 0x07)) {
 				//LOGE("find_SPS_PPS nextbuff %x %d", nextbuff, nextbuff&0x1F);
 				flag = 0x67;
@@ -814,6 +847,7 @@ int find_SPS_PPS(uint8_t* pInBuff, int iSize, uint8_t* pSPS, int* iSpsLen, uint8
 				pSPS[spsPos + endsize] = nextbuff;
 				spsPos += endsize + 1;
 				i += endsize;
+
 			}
 			else if (flag == 0x67 && ((nextbuff & 0x1F) == 0x08)) {
 				//LOGE("find_SPS_PPS nextbuff %x %d", nextbuff, nextbuff&0x1F);
@@ -822,6 +856,7 @@ int find_SPS_PPS(uint8_t* pInBuff, int iSize, uint8_t* pSPS, int* iSpsLen, uint8
 				pPpsBuf[ppsPos + endsize] = nextbuff;
 				ppsPos += endsize + 1;
 				i += endsize;
+
 			}
 			else if (flag == 0x68) {
 
@@ -830,19 +865,26 @@ int find_SPS_PPS(uint8_t* pInBuff, int iSize, uint8_t* pSPS, int* iSpsLen, uint8
 				//LOGE("find_SPS_PPS ok");
 				return 0;
 			}
+
 		}
 		else {
 			if (flag == 0x67) {
+
 				pSPS[spsPos] = pInBuff[i];
 				spsPos++;
+
 			}
 			else if (flag == 0x68) {
+
 				pPpsBuf[ppsPos] = pInBuff[i];
 				ppsPos++;
+
 			}
 		}
 	}
+
 	return -1;
+
 }
 
 /*

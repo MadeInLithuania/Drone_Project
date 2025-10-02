@@ -6,13 +6,13 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="RenderSurface">
-      <UniqueIdentifier>{fdd8e132-8cf5-489b-b5b1-f2a068fe4416}</UniqueIdentifier>
+      <UniqueIdentifier>{cde8ab79-571d-4302-b888-5cb98ef27984}</UniqueIdentifier>
     </Filter>
     <Filter Include="RenderSurface\Renderer">
-      <UniqueIdentifier>{0343dc8d-db07-4b5a-a630-5886d3a598c2}</UniqueIdentifier>
+      <UniqueIdentifier>{c6c1da6a-c446-45af-8e15-d9d5e1caff0c}</UniqueIdentifier>
     </Filter>
     <Filter Include="RenderSurface\Renderer\CalibrationVideoFeedRenderer">
-      <UniqueIdentifier>{fadcb302-8603-41ff-9e9f-5ce7bdd56c9a}</UniqueIdentifier>
+      <UniqueIdentifier>{f75d020e-7c9a-4799-bda7-4038c47fe708}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
